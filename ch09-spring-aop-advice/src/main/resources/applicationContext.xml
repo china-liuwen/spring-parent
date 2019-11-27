@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--被bean管理的类-->
+    <bean id="longImpl" class="com.LogImpl"/>
+    <bean id="longImpl2" class="com.LogImpl2"/>
+    <bean id="employeeService" class="com.EmployeeServiceImpl"/>
+
+    <!--aop的所有配置-->
+    <aop:config>
+        <!--放在外面这里pointcut(切点类)的表达式,意味着可以被多个aspect（切面类）引用-->
+        <aop:pointcut id="mypointcut" expression="execution(* com.EmployeeServiceImpl.*(..))"/>
+        <aop:aspect ref="longImpl">
+
+            <!--before（前置通知）-->
+            <aop:before method="before" pointcut-ref="mypointcut"/>
+
+
+            <!--after（最终通知）-->
+            <aop:after method="after" pointcut-ref="mypointcut"/>
+
+            <!--after-returning（返回通知）-->
+            <aop:after-returning method="afterReturn" pointcut-ref="mypointcut"/>
+
+            <!--after-returning(异常通知)-->
+            <aop:after-throwing method="throwAdvice" throwing="re" pointcut-ref="mypointcut"/>
+
+
+
+            <!--aroundAdvice(环绕通知) 上面的全部概况-->
+            <aop:around method="aroundAdvice" pointcut-ref="mypointcut"/>
+
+        </aop:aspect>
+
+    </aop:config>
+
+</beans>

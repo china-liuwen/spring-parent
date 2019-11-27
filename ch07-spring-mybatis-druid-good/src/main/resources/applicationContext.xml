@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd">
+
+
+    <!--相当于让spring读取外部的properties文件
+    placeholder:占位符的意思
+
+spring会读取很多地方的一些属性,比如当前操作系统的环境变量
+jdk设置的属性值等
+
+所以某些环境可能导致properties文件的内容会被其它覆盖,所以
+建议设置一个local-override=true
+    -->
+
+    <context:property-placeholder location="classpath:db.properties" local-override="true"/>
+
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="url" value="${jdbc.url}"/>
+    </bean>
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"></property>
+
+        <!--前缀classpath是spring拥有的一种查找资源的方式,意思就是在当前项目的类路劲下面查找文件
+        classpath* 这个前缀是在当前项目的类路径以及它所依赖的其它jar文件里面找
+
+
+        configLocation就是引入mybatis的配置文件.
+        -->
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+    </bean>
+
+
+
+    <!--
+    scan:扫描的意思
+    base:基础
+    package:包
+    扫描com.dao下面的所有类依旧com.dao的所有子包下面类
+
+    配置scan时可以不需要指定sqlSessionFactory,因为它会利用
+    自动装配的机制找到当前spring容器中的sqlSessionFactory
+
+    这个扫描会包里面的所有的dao的实现类都创建出来并注册到spring容器中
+    -->
+    <mybatis:scan base-package="com.dao"/>
+    <bean id="employeeService" class="com.service.impl.EmployeeServiceImpl" autowire="byType">
+
+    </bean>
+
+</beans>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--用bean先把两个类管理起来-->
+    <bean id="log" class="com.LogImpl"/>
+    <bean id="employeeService" class="com.EmployeeServiceImpl"/>
+
+
+    <!--aop的配置-->
+    <aop:config>
+
+        <!--切面类的配置-->
+        <aop:aspect id="logAspect" ref="log">
+            <!--切点表达式的配置-->
+            <aop:pointcut id="myPointcut" expression="execution(* com.*.*())"/>
+
+            <!--before的通知,主要用来确定当前这个切面类的什么方法在什么时候切入到
+            切点表达式指向的方法里面. before意思是之前
+            -->
+            <aop:before method="before" pointcut-ref="myPointcut"></aop:before>
+        </aop:aspect>
+        
+    </aop:config>
+
+
+    <!--aop的几个术语
+    1.切面(aspect):案例中指的就是LogImpl这个类
+    2.切点(pointcut):它也称为切点表达式,目的是描述符合条件的方法
+    3.目标(target):就是案例中的EmployeeServiceImpl对象
+    4.连接点(join point):就是目标对象中的insert,update方法
+    5.通知(advice):就是切面类中的beforeXXX这个方法
+    6.aop代理(aopProxy):spring aop的实现就是靠代理来做到的,默认利用jdk代理和cglib代理
+    来实现
+    7.织入(weaving):是个动词,表示把切面类的通知与目标对象连接点糅合在一起的过程就叫织入
+
+    aop:aspect Oriented programming:
+    -->
+
+</beans>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
+
+
+    <bean id="paramAspect" class="param.ParamAspect"/>
+    <bean id="employeeService" class="com.EmployeeServiceImpl"/>
+
+
+    <aop:config>
+
+        <aop:pointcut id="myPointcut1" expression="execution(* com.EmployeeServiceImpl.*(..)) and args(x1,y1)"/>
+        <aop:aspect ref="paramAspect" order="3">
+
+            <!--arg-names（设置参数。指定别名的）-->
+            <aop:before method="before" pointcut-ref="myPointcut1" arg-names="x1,y1"/>
+        </aop:aspect>
+
+    </aop:config>
+
+    <!--
+        1. 切点表达式中的args与execution都叫切点指示器(PointCut Designer)
+        2.args是用来表示查找有多少个参数,args(x),表示找到只有一个参数
+        3.args里面的名字相当于一个变量名,在调用目标方法时,依据调用目标方法
+        传递的数据,给这个变量名赋值
+        4.通知执行的时候,需要参数,那么这些参数的值就通过从变量里面找,默认就是找同名的
+        所以在不设置arg-names的时候,就会找args()表达式里面与通知方法同名的数据
+        5.但是4步的做法会导致切点表达式与通知方法的形参名耦合一起,所以spring提供了一个灵活的机制
+        就是在配置通知时,利用arg-names指定"别名"
+        6.args-names指定了别名后就以别名为准,那么就会导致args表达式里面就需要与args-names对应起来
+    -->
+
+</beans>
